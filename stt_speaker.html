@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>음성 입력기 (스마트폰)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body { font-family: sans-serif; padding: 20px; text-align: center; }
+    #status { font-size: 20px; margin-top: 20px; color: #888; }
+    #text { font-size: 24px; margin-top: 30px; }
+    button { font-size: 24px; padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h2>🎤 스마트폰 음성 입력</h2>
+  <button id="toggleBtn">음성 인식 시작</button>
+  <div id="status">대기 중...</div>
+  <div id="text">자막 전송 대기 중...</div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+  <script>
+    
+const firebaseConfig = {
+  apiKey: "AIzaSyCSBfeKk5H9S_Zf23vwkWrcusvku-e3934",
+  authDomain: "stt-test-32da8.firebaseapp.com",
+  databaseURL: "https://stt-test-32da8-default-rtdb.firebaseio.com",
+  projectId: "stt-test-32da8",
+  storageBucket: "stt-test-32da8.firebasestorage.app",
+  messagingSenderId: "746527873351",
+  appId: "1:746527873351:web:c21b79f9e4ce5b122b1462",
+  measurementId: "G-HQ2BPTTJ1N"
+};
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const statusDiv = document.getElementById('status');
+    const textDiv = document.getElementById('text');
+    const toggleBtn = document.getElementById('toggleBtn');
+
+    let recognizing = false;
+    let recognition;
+
+    const setupRecognition = () => {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        statusDiv.textContent = "이 브라우저에서는 음성 인식을 지원하지 않습니다.";
+        toggleBtn.disabled = true;
+        return;
+      }
+      recognition = new SpeechRecognition();
+      recognition.lang = 'ko-KR';
+      recognition.continuous = true;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        statusDiv.textContent = "🎙️ 인식 중...";
+      };
+
+      recognition.onresult = (event) => {
+        const text = event.results[event.results.length - 1][0].transcript;
+        textDiv.textContent = text;
+        db.ref("caption/current").set(text);
+      };
+
+      recognition.onerror = (event) => {
+        statusDiv.textContent = "⚠️ 오류 발생: " + event.error;
+        recognizing = false;
+        toggleBtn.textContent = "음성 인식 시작";
+      };
+
+      recognition.onend = () => {
+        if (recognizing) {
+          recognition.start();  // 재시작 (간헐적 중단 대응)
+        } else {
+          statusDiv.textContent = "⏸️ 인식 종료됨";
+        }
+      };
+    };
+
+    setupRecognition();
+
+    toggleBtn.onclick = () => {
+      if (!recognition) return;
+      if (recognizing) {
+        recognition.stop();
+        recognizing = false;
+        toggleBtn.textContent = "음성 인식 시작";
+        statusDiv.textContent = "⏸️ 인식 멈춤";
+      } else {
+        try {
+          recognition.start();
+          recognizing = true;
+          toggleBtn.textContent = "음성 인식 정지";
+          statusDiv.textContent = "🎙️ 인식 중...";
+        } catch (e) {
+          statusDiv.textContent = "⚠️ 인식 시작 실패: " + e.message;
+        }
+      }
+    };
+  </script>
+</body>
+</html>
