@@ -57,5 +57,14 @@
       db.ref("subtitle").set(message);
     }
   </script>
+  <hr>
+<h3>📺 현재 자막</h3>
+<div id="subtitlePreview" style="font-size:24px; color:#444; margin-top:10px;">⏳ 자막을 기다리는 중...</div>
+
+<script>
+  db.ref("subtitle").on("value", function(snapshot) {
+    document.getElementById("subtitlePreview").innerText = snapshot.val() || "⏳ 자막을 기다리는 중...";
+  });
+</script>
 </body>
 </html>
