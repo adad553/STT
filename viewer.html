@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>자막 보기</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <style>
+    body {
+      background-color: #000;
+      color: #00FF00;
+      font-size: 60px;
+      text-align: center;
+      padding-top: 20vh;
+      margin: 0;
+      font-family: sans-serif;
+    }
+    #subtitle {
+      transition: all 0.2s ease-in-out;
+      padding: 0 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="subtitle">⏳ 자막을 기다리는 중...</div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCSBfeKk5H9S_Zf23vwkWrcusvku-e3934",
+      authDomain: "stt-test-32da8.firebaseapp.com",
+      databaseURL: "https://stt-test-32da8-default-rtdb.firebaseio.com",
+      projectId: "stt-test-32da8",
+      storageBucket: "stt-test-32da8.appspot.com",
+      messagingSenderId: "746527873351",
+      appId: "1:746527873351:web:c21b79f9e4ce5b122b1462",
+      measurementId: "G-HQ2BPTTJ1N"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const subtitleDiv = document.getElementById("subtitle");
+
+    db.ref("subtitle").on("value", function(snapshot) {
+      const val = snapshot.val();
+      subtitleDiv.innerText = val ? val : "⏳ 자막을 기다리는 중...";
+    }, function(error) {
+      subtitleDiv.innerText = "❌ Firebase 연결 실패";
+    });
+  </script>
+</body>
+</html>
