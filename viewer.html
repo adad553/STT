@@ -37,17 +37,13 @@
       measurementId: "G-HQ2BPTTJ1N"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    const subtitleDiv = document.getElementById("subtitle");
-
-    db.ref("subtitle").on("value", function(snapshot) {
-      const val = snapshot.val();
-      subtitleDiv.innerText = val ? val : "⏳ 자막을 기다리는 중...";
-    }, function(error) {
-      subtitleDiv.innerText = "❌ Firebase 연결 실패";
-    });
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+db.ref("subtitle").on("value", function(snapshot) {
+  document.getElementById("subtitle").innerText = snapshot.val() || "⏳ 자막을 기다리는 중...";
+}, function(error) {
+  document.getElementById("subtitle").innerText = "❌ Firebase 연결 실패";
+});
   </script>
 </body>
 </html>
