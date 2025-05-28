@@ -1,46 +1,41 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>실시간 자막 (태블릿)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>자막 보기</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <style>
-    body { background: #f4f4f4; text-align: center; padding: 40px; }
-    #subtitle {
-      font-size: 48px; padding: 40px; background: white;
-      border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    body {
+      background-color: #000;
+      color: #00FF00;
+      font-size: 60px;
+      text-align: center;
+      padding-top: 20vh;
+      margin: 0;
+      font-family: sans-serif;
     }
   </style>
 </head>
 <body>
-  <h1>📺 자막 보기</h1>
-  <div id="subtitle">대기 중...</div>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  <div id="subtitle">...</div>
 
   <script>
-    
-const firebaseConfig = {
-  apiKey: "AIzaSyCSBfeKk5H9S_Zf23vwkWrcusvku-e3934",
-  authDomain: "stt-test-32da8.firebaseapp.com",
-  databaseURL: "https://stt-test-32da8-default-rtdb.firebaseio.com",
-  projectId: "stt-test-32da8",
-  storageBucket: "stt-test-32da8.firebasestorage.app",
-  messagingSenderId: "746527873351",
-  appId: "1:746527873351:web:c21b79f9e4ce5b122b1462",
-  measurementId: "G-HQ2BPTTJ1N"
-};
-
+    const firebaseConfig = {
+      apiKey: "AIzaSyCSBfeKk5H9S_Zf23vwkWrcusvku-e3934",
+      authDomain: "stt-test-32da8.firebaseapp.com",
+      databaseURL: "https://stt-test-32da8-default-rtdb.firebaseio.com",
+      projectId: "stt-test-32da8",
+      storageBucket: "stt-test-32da8.appspot.com",
+      messagingSenderId: "746527873351",
+      appId: "1:746527873351:web:c21b79f9e4ce5b122b1462",
+      measurementId: "G-HQ2BPTTJ1N"
+    };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const subtitleDiv = document.getElementById('subtitle');
-    db.ref("caption/current").on("value", (snapshot) => {
-      const text = snapshot.val();
-      subtitleDiv.textContent = text || "대기 중...";
+    db.ref("subtitle").on("value", function(snapshot) {
+      document.getElementById("subtitle").innerText = snapshot.val() || "";
     });
   </script>
 </body>
