@@ -19,6 +19,11 @@
       cursor: pointer;
     }
     button:hover { background-color: #0056b3; }
+    #subtitlePreview {
+      font-size: 24px;
+      color: #444;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -34,6 +39,11 @@
   <button onclick="sendPreset('도와드릴게요. 무엇을 도와드릴까요?')">2️⃣ 도와드릴게요</button>
   <button onclick="sendPreset('잠시만 기다려주세요')">3️⃣ 잠시 대기 요청</button>
 
+  <hr>
+
+  <h3>📺 현재 자막</h3>
+  <div id="subtitlePreview">⏳ 자막을 기다리는 중...</div>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCSBfeKk5H9S_Zf23vwkWrcusvku-e3934",
@@ -45,26 +55,30 @@
       appId: "1:746527873351:web:c21b79f9e4ce5b122b1462",
       measurementId: "G-HQ2BPTTJ1N"
     };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     function sendText() {
       const text = document.getElementById("textInput").value;
       db.ref("subtitle").set(text);
+      document.getElementById("textInput").value = "";
     }
 
     function sendPreset(message) {
       db.ref("subtitle").set(message);
     }
-  </script>
-  <hr>
-<h3>📺 현재 자막</h3>
-<div id="subtitlePreview" style="font-size:24px; color:#444; margin-top:10px;">⏳ 자막을 기다리는 중...</div>
 
-<script>
-  db.ref("subtitle").on("value", function(snapshot) {
-    document.getElementById("subtitlePreview").innerText = snapshot.val() || "⏳ 자막을 기다리는 중...";
-  });
-</script>
+    db.ref("subtitle").on("value", function(snapshot) {
+      document.getElementById("subtitlePreview").innerText = snapshot.val() || "⏳ 자막을 기다리는 중...";
+    });
+
+    document.getElementById("textInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendText();
+      }
+    });
+  </script>
 </body>
 </html>
