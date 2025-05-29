@@ -10,7 +10,7 @@
     body {
       background-color: #000;
       color: #00FF00;
-      font-size: 128px;
+      font-size: 64px;
       text-align: center;
       padding-top: 25vh;
       margin: 0;
@@ -19,6 +19,7 @@
     #subtitle {
       transition: opacity 0.2s ease-in-out;
       padding: 0 40px;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -26,7 +27,6 @@
   <div id="subtitle">⏳ 자막을 기다리는 중...</div>
 
   <script>
-    // Firebase 설정
     const firebaseConfig = {
       apiKey: "AIzaSyCSBfeKk5H9S_Zf23vwkWrcusvku-e3934",
       authDomain: "stt-test-32da8.firebaseapp.com",
@@ -38,23 +38,21 @@
       measurementId: "G-HQ2BPTTJ1N"
     };
 
-    // Firebase 초기화
-    try {
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.database();
-      const subtitleDiv = document.getElementById("subtitle");
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const subtitleDiv = document.getElementById("subtitle");
 
-      db.ref("subtitle").on("value", function(snapshot) {
-        const val = snapshot.val();
-        subtitleDiv.innerText = val ? val : "⏳ 자막을 기다리는 중...";
-      }, function(error) {
-        subtitleDiv.innerText = "❌ Firebase 데이터 수신 오류";
-        console.error("Firebase 오류:", error);
-      });
-    } catch (err) {
-      document.getElementById("subtitle").innerText = "❌ Firebase 초기화 실패";
-      console.error("초기화 오류:", err);
-    }
+    db.ref("subtitle").on("value", function(snapshot) {
+      const val = snapshot.val();
+      if (val) {
+        subtitleDiv.innerHTML = val.replace(/\n/g, "<br>");
+      } else {
+        subtitleDiv.innerHTML = "⏳ 자막을 기다리는 중...";
+      }
+    }, function(error) {
+      subtitleDiv.innerHTML = "❌ Firebase 데이터 수신 오류";
+      console.error("Firebase 오류:", error);
+    });
   </script>
 </body>
 </html>
