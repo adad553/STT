@@ -10,7 +10,7 @@
     body {
       background-color: #000;
       color: #00FF00;
-      font-size: 64px;
+      font-size: 100px;
       text-align: center;
       padding-top: 25vh;
       margin: 0;
@@ -44,11 +44,7 @@
 
     db.ref("subtitle").on("value", function(snapshot) {
       const val = snapshot.val();
-      if (val) {
-        subtitleDiv.innerHTML = val.replace(/\n/g, "<br>");
-      } else {
-        subtitleDiv.innerHTML = "⏳ 자막을 기다리는 중...";
-      }
+      subtitleDiv.innerHTML = val ? val.replace(/\n/g, "<br>") : "⏳ 자막을 기다리는 중...";
     }, function(error) {
       subtitleDiv.innerHTML = "❌ Firebase 데이터 수신 오류";
       console.error("Firebase 오류:", error);
@@ -56,3 +52,4 @@
   </script>
 </body>
 </html>
+
