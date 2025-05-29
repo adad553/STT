@@ -23,6 +23,7 @@
       font-size: 24px;
       color: #444;
       margin-top: 10px;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -68,11 +69,13 @@
     }
 
     function sendPreset(message) {
-      db.ref("subtitle").set(message);
+      const fixed = message.replace(/\\n/g, "\n");
+      db.ref("subtitle").set(fixed);
     }
 
     db.ref("subtitle").on("value", function(snapshot) {
-      document.getElementById("subtitlePreview").innerText = snapshot.val() || "⏳ 자막을 기다리는 중...";
+      const val = snapshot.val();
+      document.getElementById("subtitlePreview").innerHTML = val ? val.replace(/\n/g, "<br>") : "⏳ 자막을 기다리는 중...";
     });
 
     document.getElementById("textInput").addEventListener("keydown", function(event) {
