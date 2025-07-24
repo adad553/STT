@@ -40,9 +40,12 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+
+    const PC_ID = "pc1"
+    
     const subtitleDiv = document.getElementById("subtitle");
 
-    db.ref("subtitle").on("value", function(snapshot) {
+    db.ref("subtitle/${pc1}").on("value", function(snapshot) {
       const val = snapshot.val();
       subtitleDiv.innerHTML = val ? val.replace(/\n/g, "<br>") : "⏳ 자막을 기다리는 중...";
     }, function(error) {
